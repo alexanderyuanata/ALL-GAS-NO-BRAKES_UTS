@@ -5,7 +5,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     // Global variables
-    public float movement_speed = 10f;
+    public CharacterController controls;
+
+    public float movement_speed = 15f;
 
     // Start is called before the first frame update
     void Start()
@@ -16,11 +18,12 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Gets movement inputs
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
-        Vector3 direction = new Vector3(horizontalInput, 0, verticalInput).normalized;
+        Vector3 direction = transform.right * horizontalInput + transform.forward * verticalInput;
 
-        transform.Translate(direction * movement_speed * Time.deltaTime);
+        controls.Move(direction * movement_speed * Time.deltaTime);
     }
 }
