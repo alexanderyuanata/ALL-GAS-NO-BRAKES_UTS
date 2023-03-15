@@ -675,8 +675,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enabled: 1
-  amplitude: 0.008
-  frequency: 4
+  amplitude: 0.004
+  frequency: 10
   togglespeed: 1.5
   playercamera: {fileID: 963194228}
   cameraholder: {fileID: 2096163448}
