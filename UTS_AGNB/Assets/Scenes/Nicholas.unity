@@ -349,6 +349,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67d32b34278211042b31a704457a6f54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pointsText: {fileID: 0}
 --- !u!1 &785911045
 GameObject:
   m_ObjectHideFlags: 0
@@ -680,7 +681,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: Made in hell
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 82231f35cf028a846a53ccb2938a3530, type: 2}
   m_sharedMaterial: {fileID: 3342330851312967652, guid: 82231f35cf028a846a53ccb2938a3530, type: 2}

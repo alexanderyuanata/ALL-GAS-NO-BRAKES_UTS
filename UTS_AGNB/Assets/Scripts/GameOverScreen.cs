@@ -7,10 +7,10 @@ using UnityEngine.SceneManagement;
 public class GameOverScreen : MonoBehaviour
 {
     public Text pointsText;
-
-    public void Setup (int Score){
+    
+    public void Setup (int score){
         gameObject.SetActive(true);
-        pointsText.Text = score.ToString()+" POINTS";
+        pointsText.text = score.ToString()+" POINTS";
     }
 
     public void RestartButton (){
