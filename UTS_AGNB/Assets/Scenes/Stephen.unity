@@ -661,7 +661,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controls: {fileID: 1940283277}
-  movement_speed: 10
+  walking_speed: 15
+  running_speed: 30
+  crouching_speed: 5
 --- !u!114 &1940283279
 MonoBehaviour:
   m_ObjectHideFlags: 0
