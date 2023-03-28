@@ -10,9 +10,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public Timer timerscript;
+
     public float initial_time;
     public float time_mult;
-    public Timer timerscript;
     public GameObject player;
     public GameObject flowers;
 
@@ -24,6 +25,8 @@ public class GameManager : MonoBehaviour
     private const float MAX_SPAWNRANGE = 300f;
     private const float DECAY_SEED = 0.2f;
     private const float EULER = 2.71828f;
+
+    int flowers_left = 0;
 
     class spawnpoints
     {
@@ -52,9 +55,21 @@ public class GameManager : MonoBehaviour
         return r;
     }
 
-    //generates objects that act as collectible coins
-    public void generateCoins()
+    public void decrementFlowers()
     {
+        flowers_left--;
+    }
+
+    public int getFlowersLeft()
+    {
+        return flowers_left;
+    }
+
+    //generates N objects that act as collectible coins in a certain distance from the player
+    public void generateCoins(int amount)
+    {
+        flowers_left = amount;
+
         //create a generic float list to store distance between player and spawns
         List<spawnpoints> distanceArray = new List<spawnpoints>();
         spawnpoints temp;
@@ -87,11 +102,6 @@ public class GameManager : MonoBehaviour
             totalprobability += probability;
         }
 
-        for (int i = 0; i < probabilities.Count; i++)
-        {
-            Debug.Log(probabilities[i] + " with distance " + distanceArray[i].getDist());
-        }
-
         for (int i = 0; i < COINS_AMOUNT; i++)
         {
             totalprobability = 0;
@@ -115,7 +125,6 @@ public class GameManager : MonoBehaviour
                 float r = (getRandFloat(0, 10000) / 10001);
                 if (r <= sum)
                 {
-                    Debug.Log(r);
                     Instantiate(flowers, distanceArray[j].getSpawn().position, distanceArray[j].getSpawn().rotation);
                     distanceArray.RemoveAt(j);
                     break;
@@ -130,7 +139,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         current_time = initial_time;
-        generateCoins();
+        generateCoins(COINS_AMOUNT);
     }
 
     // Update is called once per frame

@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
 {
     // Global variables
     public CharacterController controls;
+    public HeadBobControls headBobControls;
     public GameObject stopwatch;
     public GameObject held;
     public GameObject stored;
@@ -36,16 +37,19 @@ public class PlayerController : MonoBehaviour
         //use running speeed
         if(Input.GetKey(KeyCode.LeftShift))
         {
+            headBobControls.frequency = 12;
             movement_speed = running_speed;
         }
         //use crouching speed
         else if(Input.GetKey(KeyCode.LeftControl))
         {
+            headBobControls.frequency = 5;
             movement_speed = crouching_speed;
         }
         //use walking speed
         else
         {
+            headBobControls.frequency = 8;
             movement_speed = walking_speed;
         }
         Vector3 direction = transform.right * horizontalInput + transform.forward * verticalInput;
