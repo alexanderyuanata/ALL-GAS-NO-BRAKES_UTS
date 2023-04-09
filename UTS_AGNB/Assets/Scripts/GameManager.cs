@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
         AudioListener.pause = true;
         Input.ResetInputAxes();
         Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
 
         Time.timeScale = 0f;
         pause_screen.SetActive(true);
@@ -82,6 +83,7 @@ public class GameManager : MonoBehaviour
 
     public void resume()
     {
+        Cursor.visible = false;
         paused = false;
         Time.timeScale = previousTimeScale;
         AudioListener.pause = false;
@@ -89,15 +91,27 @@ public class GameManager : MonoBehaviour
         pause_screen.SetActive(false);
     }
 
-    private void gameover()
+    public bool getPlaying()
     {
-        playing = false;
+        return playing;
+    }
+
+    public void gameover()
+    {
+        if (playing)
+        {
+            previousTimeScale = 1f;
+            playing = false;
+            Time.timeScale = 0f;
+            AudioListener.pause = true;
+        }
+        
+        
         number_dis.text = flowers_gained.ToString();
         rounds_dis.text = rounds.ToString();
-        previousTimeScale = Time.timeScale;
-        Time.timeScale = 0f;
-        AudioListener.pause = true;
+        
         Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
 
         gameover_screen.SetActive(true);
     }
@@ -144,6 +158,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         rounds = 1;
+        playing = true;
         current_time = initial_time;
         generateCoins(COINS_AMOUNT);
     }
@@ -151,6 +166,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(Time.timeScale);
         if (current_time <= 0 && playing)
         {
             gameover();

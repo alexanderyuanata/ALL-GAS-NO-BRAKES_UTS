@@ -181,6 +181,11 @@ public class EnemyScript : MonoBehaviour
             break;
 
             case EnemyStates.CHASING:
+                if (Vector3.Distance(target.transform.position, transform.position) < 1.5f && GameManager.instance.getPlaying())
+                {
+                    GameManager.instance.gameover();
+                }
+
                 //enemy knows position for a short time after sighting player
                 if (tracking_timer > 0)
                 {

@@ -9,6 +9,7 @@ public class ExitMainMenu : MonoBehaviour
     public void ExitScene()
     {
         GameManager.instance.resume();
+        Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
         SceneManager.LoadScene("Opening");
     }
