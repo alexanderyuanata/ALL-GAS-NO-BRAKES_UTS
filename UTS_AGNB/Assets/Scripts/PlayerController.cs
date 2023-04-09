@@ -11,8 +11,10 @@ public class PlayerController : MonoBehaviour
     public CharacterController controls;
     public HeadBobControls headBobControls;
     public GameObject stopwatch;
-    public GameObject held;
-    public GameObject stored;
+    public Animator Animator;
+    public CanvasGroup minimap;
+    public AudioSource map_sfx;
+    public AudioSource timer_sfx;
 
     public AudioManager audioManager;
 
@@ -21,8 +23,33 @@ public class PlayerController : MonoBehaviour
     public float running_speed;
     public float crouching_speed;
 
-    // Start is called before the first frame update
-    void Start()
+    private bool toggle_map = false;
+    private bool running = false;
+
+
+    public bool getRunning()
+    {
+        return running && Input.GetKey(KeyCode.LeftShift);
+    }
+
+    private void toggleMap(bool on)
+    {
+        if (on)
+        {
+            map_sfx.Play();
+            minimap.alpha = 1;
+        }
+        else
+        {
+            if (map_sfx.isPlaying)
+            {
+                map_sfx.Stop();
+            }
+            minimap.alpha = 0;
+        }
+    }
+
+    private void Start()
     {
         
     }
@@ -34,39 +61,49 @@ public class PlayerController : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
+        running = (Mathf.Abs(horizontalInput) > 0 || Mathf.Abs(verticalInput) > 0);
+        Animator.SetBool("running", running);
+
         //use running speeed
-        if(Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
-            headBobControls.frequency = 12;
             movement_speed = running_speed;
         }
         //use crouching speed
         else if(Input.GetKey(KeyCode.LeftControl))
         {
-            headBobControls.frequency = 5;
             movement_speed = crouching_speed;
         }
         //use walking speed
         else
         {
-            headBobControls.frequency = 8;
             movement_speed = walking_speed;
         }
         Vector3 direction = transform.right * horizontalInput + transform.forward * verticalInput;
 
 
-        // if right click is held
-        if (Input.GetKey(KeyCode.Mouse1))
+        // if right click is pressed
+        if (Input.GetButtonDown("Fire2"))
         {
-            stopwatch.transform.position = held.transform.position;
-            audioManager.changeVolume(100);
+            timer_sfx.volume = 1;
+            Animator.SetTrigger("pullingout");
         }
-        else
+        else if (Input.GetButtonUp("Fire2"))
         {
-            audioManager.changeVolume(0);
-            stopwatch.transform.position = stored.transform.position;
+            Animator.SetTrigger("pullingback");
+            timer_sfx.volume = 0;
         }
 
-        controls.Move(direction * movement_speed * Time.deltaTime);
+        if (Input.GetButtonDown("Minimap"))
+        {
+            toggle_map = !toggle_map;
+            toggleMap(toggle_map);
+        }
+
+        if (!toggle_map)
+        {
+            controls.Move(direction * movement_speed * Time.deltaTime);
+        }
+        
     }
 }

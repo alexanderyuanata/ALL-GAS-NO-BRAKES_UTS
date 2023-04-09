@@ -1,32 +1,51 @@
-using GLTF.Schema;
 using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Xml;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class GameManager : MonoBehaviour
 {
     public Timer timerscript;
+    public static GameManager instance;
 
     public float initial_time;
     public float time_mult;
     public GameObject player;
     public GameObject flowers;
+    public TextOverlayManager textOverlay;
+    public GameObject flower_holder;
+    public SFXManager sfxmanager;
+    public EnemyScript enemy;
+    public GameObject pause_screen;
+    public GameObject gameover_screen;
+    public TextMeshProUGUI number_dis;
+    public TextMeshProUGUI rounds_dis;
 
     public GameObject[] spawns;
 
+    public int numberof_rounds;
+    private int rounds;
+
     private float current_time;
 
-    private const int COINS_AMOUNT = 8;
-    private const float MAX_SPAWNRANGE = 300f;
-    private const float DECAY_SEED = 0.2f;
-    private const float EULER = 2.71828f;
+    public int COINS_AMOUNT;
 
     int flowers_left = 0;
+
+    private bool playing = true;
+    private int flowers_gained = 0;
+
+    private float previousTimeScale;
+    private bool paused = false;
+
+    private float[] axisValues;
 
     class spawnpoints
     {
@@ -49,15 +68,49 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private float getRandFloat(float min, float max)
+    public void pause()
     {
-        float r = (float) UnityEngine.Random.Range(min, max+1)/max+1;
-        return r;
+        previousTimeScale = Time.timeScale;
+        AudioListener.pause = true;
+        Input.ResetInputAxes();
+        Cursor.lockState = CursorLockMode.Confined;
+
+        Time.timeScale = 0f;
+        pause_screen.SetActive(true);
+        paused = true;
+    }
+
+    public void resume()
+    {
+        paused = false;
+        Time.timeScale = previousTimeScale;
+        AudioListener.pause = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        pause_screen.SetActive(false);
+    }
+
+    private void gameover()
+    {
+        playing = false;
+        number_dis.text = flowers_gained.ToString();
+        rounds_dis.text = rounds.ToString();
+        previousTimeScale = Time.timeScale;
+        Time.timeScale = 0f;
+        AudioListener.pause = true;
+        Cursor.lockState = CursorLockMode.Confined;
+
+        gameover_screen.SetActive(true);
     }
 
     public void decrementFlowers()
     {
+        flowers_gained++;
         flowers_left--;
+        if (flowers_left <= 0)
+        {
+            rounds++;
+            generateCoins(COINS_AMOUNT);
+        }
     }
 
     public int getFlowersLeft()
@@ -65,79 +118,32 @@ public class GameManager : MonoBehaviour
         return flowers_left;
     }
 
-    //generates N objects that act as collectible coins in a certain distance from the player
+    //generates N objects that act as collectible coins at random with the same transform as preset objects
     public void generateCoins(int amount)
     {
-        flowers_left = amount;
-
-        //create a generic float list to store distance between player and spawns
-        List<spawnpoints> distanceArray = new List<spawnpoints>();
-        spawnpoints temp;
-
-        //for all spawn points inside array
-        for (int i = 0; i < spawns.Length; i++)
+        sfxmanager.playSFX(SFXManager.clips.BELL);
+        flowers_left = COINS_AMOUNT;
+        List<GameObject> spawnpoints = new List<GameObject>(spawns);
+        GameObject spawnpoint;
+        int rand;
+        for (int i = 0; i < amount; i++)
         {
-            //adds the magnitude of vector3 that is the vector of distance between a player and all spawn points
-            temp = new spawnpoints(
-                spawns[i].transform,
-                (player.transform.position - spawns[i].transform.position).magnitude
-            );
-            distanceArray.Add(temp);
+            rand = UnityEngine.Random.Range(0, spawnpoints.Count);
+            spawnpoint = spawnpoints[rand];
+            spawnpoints.RemoveAt(rand);
+            Instantiate(flowers, spawnpoint.transform.position, spawnpoint.transform.rotation, flower_holder.transform);
         }
-
-        //sort the distance array descending
-        distanceArray.Sort((a, b) => a.getDist().CompareTo(b.getDist()));
-
-        //create a list to store probabilities of each spawnpoints
-        List<float> probabilities = new List<float>();
-        float totalprobability = 0f;
-        float probability;
-
-        //the probabilities increase as distance decrease
-        foreach (spawnpoints points in distanceArray)
-        {
-            probability = 1f / (points.getDist() + 1f);
-            probabilities.Add(probability);
-            //get sum of all probabilities
-            totalprobability += probability;
-        }
-
-        for (int i = 0; i < COINS_AMOUNT; i++)
-        {
-            totalprobability = 0;
-            for (int k = 0; k < probabilities.Count; k++)
-            {
-                totalprobability += probabilities[k];
-            }
-            //normalize probabilities to equal 1
-            for (int k = 0; k < probabilities.Count; k++)
-            {
-                probabilities[k] /= totalprobability;
-            }
-
-            //create random double
-            float sum = 0f;
-            //for every spawnpoints
-            for (int j = 0; j < probabilities.Count; j++)
-            {
-                //sum of all spawns that have been checked
-                sum += probabilities[j];
-                float r = (getRandFloat(0, 10000) / 10001);
-                if (r <= sum)
-                {
-                    Instantiate(flowers, distanceArray[j].getSpawn().position, distanceArray[j].getSpawn().rotation);
-                    distanceArray.RemoveAt(j);
-                    break;
-                }
-            }
-        }
-
     }
 
+    private void Awake()
+    {
+        instance = this;
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        rounds = 1;
         current_time = initial_time;
         generateCoins(COINS_AMOUNT);
     }
@@ -145,12 +151,27 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        current_time -= Time.deltaTime;
-        timerscript.updateTimer(current_time, initial_time);
-
-        if (current_time <= 0)
+        if (current_time <= 0 && playing)
         {
-            //game over
+            gameover();
+        }
+
+        if (Input.GetButtonDown("Cancel"))
+        {
+            if (!paused)
+            {
+                pause();
+            }
+            else
+            {
+                resume();
+            }
+        }
+
+        if (!paused)
+        {
+            current_time -= Time.deltaTime;
+            timerscript.updateTimer(current_time, initial_time);
         }
     }
 

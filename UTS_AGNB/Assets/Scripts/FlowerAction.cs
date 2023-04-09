@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,11 +14,12 @@ public class FlowerAction : MonoBehaviour
         //when collides with player
         if (other.name == "Player")
         {
-            Debug.Log("Collides with " + other.name);
-
-            sfxmanager.playSFX(SFXManager.clips.DING);
-            textoverlaymanager.startTextOverlay(gamemanager.getFlowersLeft());
             gamemanager.decrementFlowers();
+            if (gamemanager.getFlowersLeft() > 0)
+            {
+                sfxmanager.playSFX(SFXManager.clips.DING);
+                textoverlaymanager.startTextOverlay(gamemanager.getFlowersLeft().ToString());
+            }
 
             //destroy self
             Destroy(gameObject);

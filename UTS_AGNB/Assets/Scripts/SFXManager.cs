@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SFXManager : MonoBehaviour
@@ -10,6 +11,10 @@ public class SFXManager : MonoBehaviour
         WOMANSCREAM = 1,
         MONSTERGROWL = 2,
         DING = 3,
+        STEP1 = 4,
+        STEP2 = 5,
+        BELL = 6,
+        CACKLE = 7,
     }
 
     public AudioClip[] sfx_clips;

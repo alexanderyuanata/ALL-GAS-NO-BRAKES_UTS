@@ -4,66 +4,46 @@ using UnityEngine;
 
 public class HeadBobControls : MonoBehaviour
 {
-    public bool _enabled = true;
+    public float bobbingSpeed = 0.18f;
+    public float bobbingAmount = 0.2f;
+    public float midpoint = 2.0f;
 
-    public float amplitude = 0.015f;
-    public float frequency = 10f;
-    public float togglespeed = 3f;
+    private float timer = 0.0f;
 
-    public Transform playercamera;
-    public Transform cameraholder;
-    public CharacterController player;
-
-    private Vector3 startposition;
-
-    private void PlayMotion(Vector3 motion)
-    {
-        playercamera.localPosition += motion;
-    }
-    private Vector3 footstep()
-    {
-        Vector3 pos = Vector3.zero;
-        pos.y += Mathf.Sin(Time.time * frequency) * amplitude;
-        pos.x += Mathf.Cos(Time.time * frequency / 2) * amplitude * 2;
-        return pos;
-    }
-
-    private void checkMotion()
-    {
-        float speed = new Vector3(player.velocity.x, 0, player.velocity.z).magnitude;
-
-        if (speed < togglespeed) return;
-
-        PlayMotion(footstep());
-    }
-
-    private void resetPosition()
-    {
-        if (playercamera.localPosition == startposition) return;
-        playercamera.localPosition = Vector3.Lerp(playercamera.localPosition, startposition, 1 * Time.deltaTime);
-    }
-
-    private Vector3 focusTarget()
-    {
-        Vector3 pos = new Vector3(transform.position.x, transform.position.y + cameraholder.localPosition.y, transform.position.z);
-        pos += cameraholder.forward * 15f;
-        return pos;
-    }    
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        startposition = playercamera.localPosition;
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        if (!_enabled) return;
+        float waveslice = 0.0f;
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
 
-        checkMotion();
-        resetPosition();
-        playercamera.LookAt(focusTarget());
+        Vector3 cSharpConversion = transform.localPosition;
+
+        if (Mathf.Abs(horizontal) == 0 && Mathf.Abs(vertical) == 0)
+        {
+            timer = 0.0f;
+        }
+        else
+        {
+            waveslice = Mathf.Sin(timer);
+            timer = timer + bobbingSpeed;
+            if (timer > Mathf.PI * 2)
+            {
+                timer = timer - (Mathf.PI * 2);
+            }
+        }
+        if (waveslice != 0)
+        {
+            float translateChange = waveslice * bobbingAmount;
+            float totalAxes = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
+            totalAxes = Mathf.Clamp(totalAxes, 0.0f, 1.0f);
+            translateChange = totalAxes * translateChange;
+            cSharpConversion.y = midpoint + translateChange;
+        }
+        else
+        {
+            cSharpConversion.y = midpoint;
+        }
+
+        transform.localPosition = cSharpConversion;
     }
 }
