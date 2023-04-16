@@ -107,9 +107,9 @@ NavMeshSettings:
     serializedVersion: 2
     agentTypeID: 0
     agentRadius: 0.07
-    agentHeight: 0.22
+    agentHeight: 0.76
     agentSlope: 0
-    agentClimb: 0.1
+    agentClimb: 0.01
     ledgeDropHeight: 0
     maxJumpAcrossDistance: 0
     minRegionArea: 8
@@ -122,7 +122,7 @@ NavMeshSettings:
     preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 23800000, guid: 9317e6965047a59409db8d16c0752c21, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 7f3bc30dce060da40a44388f99a73fa9, type: 2}
 --- !u!1 &11306256
 GameObject:
   m_ObjectHideFlags: 0
@@ -5387,7 +5387,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1393351836
 Transform:
@@ -8908,7 +8908,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2797382525149647275}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d555341d7b710574e8e733a4c291b2a3, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
@@ -9808,6 +9808,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5554258952239336951}
   - component: {fileID: 2581191581565162321}
+  - component: {fileID: 8771942036930139885}
   m_Layer: 0
   m_Name: Group35364
   m_TagString: Untagged
@@ -9815,3 +9816,17 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!64 &8771942036930139885
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8771942036930139884}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
