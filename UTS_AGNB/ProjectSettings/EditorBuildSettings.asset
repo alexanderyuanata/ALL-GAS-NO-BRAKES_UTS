@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Gameplay.unity
     guid: 7d6bb70585488784ba5aede83161bb65
+  - enabled: 1
+    path: Assets/Scenes/Alex.unity
+    guid: debd386730bdc0f4b83fec4bfdbfcf66
   m_configObjects: {}
