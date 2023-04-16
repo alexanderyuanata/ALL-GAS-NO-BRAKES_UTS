@@ -181,7 +181,7 @@ public class EnemyScript : MonoBehaviour
             break;
 
             case EnemyStates.CHASING:
-                if (Vector3.Distance(target.transform.position, transform.position) < 1.5f && GameManager.instance.getPlaying())
+                if (Vector3.Distance(target.transform.position, transform.position) < 2.25f && GameManager.instance.getPlaying())
                 {
                     GameManager.instance.gameover();
                 }

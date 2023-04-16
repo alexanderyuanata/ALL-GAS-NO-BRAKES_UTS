@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour
             movement_speed = walking_speed;
         }
         Vector3 direction = transform.right * horizontalInput + transform.forward * verticalInput;
-
+        Debug.DrawRay(transform.position, direction);
 
         // if right click is pressed
         if (Input.GetButtonDown("Fire2"))

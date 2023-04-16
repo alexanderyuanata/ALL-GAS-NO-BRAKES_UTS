@@ -105,8 +105,7 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 0f;
             AudioListener.pause = true;
         }
-        
-        
+
         number_dis.text = flowers_gained.ToString();
         rounds_dis.text = rounds.ToString();
         
@@ -166,28 +165,30 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(Time.timeScale);
         if (current_time <= 0 && playing)
         {
             gameover();
         }
 
-        if (Input.GetButtonDown("Cancel"))
+        if (playing)
         {
+            if (Input.GetButtonDown("Cancel"))
+            {
+                if (!paused)
+                {
+                    pause();
+                }
+                else
+                {
+                    resume();
+                }
+            }
+
             if (!paused)
             {
-                pause();
+                current_time -= Time.deltaTime;
+                timerscript.updateTimer(current_time, initial_time);
             }
-            else
-            {
-                resume();
-            }
-        }
-
-        if (!paused)
-        {
-            current_time -= Time.deltaTime;
-            timerscript.updateTimer(current_time, initial_time);
         }
     }
 
